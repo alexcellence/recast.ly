@@ -2,10 +2,12 @@ import exampleVideoData from '../data/exampleVideoData.js';
 import VideoList from './VideoList.js';
 import VideoPlayer from './VideoPlayer.js';
 import Search from './Search.js';
+import searchYouTube from '../lib/searchYouTube.js';
+import ApiKey from '../config/youtube.js';
 
 class App extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       videos: exampleVideoData,
       video: exampleVideoData[0],
@@ -14,18 +16,33 @@ class App extends React.Component {
     this.handleVideoChange = this.handleVideoChange.bind(this);
     this.handleSearchResult = this.handleSearchResult.bind(this);
   }
+
+
+  componentDidMount() {
+    this.handleSearchResult('red panda');
+  }
+
   handleVideoChange(video) {
     this.setState({
       video: video
     });
   }
   handleSearchResult(searched) {
-    console.log('hello');
-    this.setState({
-      searchResult: searched
+    console.log('searched', searched);
+    var options = {
+      key: this.props.API_KEY,
+      query:searched
+    };
+    this.props.searchYouTube(/*{this.props.API_KEY, searched}*/ options, (videos) => {
+      this.setState({
+        videos: videos,
+        video: videos[0],
+      });
     });
   }
+
   render() {
+    // searchYouTube({key :'key', query: 'cat', max: 3}, callback = ()=>{})
     return (
       <div>
         <nav className="navbar">
